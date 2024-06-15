@@ -188,3 +188,37 @@ describe('PATCH /api/users/current', () => {
         expect(response.body.errors).toBeDefined();
     });
 });
+
+describe('DELETE /api/users/current', () => {
+    beforeEach(async () => {
+        await UserTest.create();
+    });
+
+    afterEach(async () => {
+        await UserTest.delete();
+    });
+
+    it('Should be able to logout', async () => {
+        const response = await supertest(web)
+            .delete("/api/users/current")
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBe(true);
+
+        const user = await UserTest.get();
+
+        expect(user.token).toBe(null);
+    });
+
+    it('Should reject loogout user if token is invalid', async () => {
+        const response = await supertest(web)
+            .delete("/api/users/current")
+            .set("X-API-TOKEN", "salah");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(401);
+        expect(response.body.errors).toBeDefined();
+    });
+});
