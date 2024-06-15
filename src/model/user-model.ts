@@ -1,4 +1,5 @@
-import {User} from "@prisma/client";
+import {Prisma, User} from "@prisma/client";
+import {DefaultArgs, GetResult} from "@prisma/client/runtime/library";
 
 export type UserResponse = {
     username: string;
@@ -9,6 +10,11 @@ export type UserResponse = {
 export type CreateUserRequest = {
     username: string;
     name: string;
+    password: string;
+}
+
+export type LoginUserRequest = {
+    username: string;
     password: string;
 }
 
