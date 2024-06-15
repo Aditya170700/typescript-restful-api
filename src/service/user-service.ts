@@ -5,6 +5,7 @@ import {prismaClient} from "../application/database";
 import {ResponseError} from "../../error/response-error";
 import bcrypt from 'bcrypt';
 import {v4 as uuid} from "uuid";
+import {User} from "@prisma/client";
 
 export class UserService {
     static async register(request: CreateUserRequest): Promise<UserResponse> {
@@ -24,7 +25,7 @@ export class UserService {
             data: data
         });
 
-        return toUserResponse(user);
+        return toUserResponse(user as User);
     }
 
     static async login(request: LoginUserRequest): Promise<UserResponse> {
@@ -51,8 +52,12 @@ export class UserService {
             }
         });
 
-        const response = toUserResponse(user);
+        const response = toUserResponse(user as User);
         response.token = user.token!;
         return response;
+    }
+
+    static async get(user: User): Promise<UserResponse> {
+        return toUserResponse(user as User);
     }
 }

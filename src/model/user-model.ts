@@ -18,9 +18,7 @@ export type LoginUserRequest = {
     password: string;
 }
 
-export function toUserResponse(user: Prisma.Prisma__UserClient<GetResult<Prisma.$UserPayload<DefaultArgs>, {
-    data: CreateUserRequest
-}, "create">, never, DefaultArgs>): UserResponse {
+export function toUserResponse(user: User): UserResponse {
     return {
         name: user.name,
         username: user.username,
