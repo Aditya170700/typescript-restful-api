@@ -14,6 +14,7 @@
   "author": "Aditya Ricki",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.15.0",
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",
     "uuid": "^10.0.0",
