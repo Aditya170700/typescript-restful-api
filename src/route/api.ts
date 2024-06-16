@@ -18,3 +18,4 @@ apiRouter.delete("/api/contacts/:contactId(\\d+)", ContactController.remove);
 apiRouter.get("/api/contacts", ContactController.search);
 
 apiRouter.post("/api/contacts/:contactId(\\d+)/addresses", AddressController.create);
+apiRouter.post("/api/contacts/:contactId(\\d+)/addresses/:addressId(\\d+)", AddressController.get);
