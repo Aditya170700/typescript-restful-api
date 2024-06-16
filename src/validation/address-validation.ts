@@ -24,4 +24,9 @@ export class AddressValidation {
         country: z.string().min(1).max(100).optional(),
         postal_code: z.string().min(1).max(10).optional(),
     });
+
+    static readonly REMOVE: ZodType = z.object({
+        contact_id: z.number().positive(),
+        id: z.number().positive(),
+    });
 }
