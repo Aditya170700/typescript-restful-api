@@ -4,7 +4,10 @@
   "description": "Belajar typescript restful api",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "migration": "npx prisma migrate dev && npx prisma generate",
+    "build": "npx tsc",
+    "start": "node dist/main.js"
   },
   "jest": {
     "transform": {

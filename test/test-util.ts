@@ -1,7 +1,7 @@
 import {prismaClient} from "../src/application/database";
 import bcrypt from "bcrypt";
 import {Address, Contact, User} from "@prisma/client";
-import {ResponseError} from "../error/response-error";
+import {ResponseError} from "../src/error/response-error";
 
 export class UserTest {
     static async delete() {
