@@ -172,3 +172,141 @@ describe('DELETE /api/contacts/:contactId', () => {
         expect(response.body.errors).toBeDefined();
     });
 });
+
+describe('GET /api/contacts', () => {
+    beforeEach(async () => {
+        await UserTest.create();
+        await ContactTest.create();
+    });
+
+    afterEach(async () => {
+        await ContactTest.deleteAll();
+        await UserTest.delete();
+    });
+
+    it('Should be able search contact', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(1);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(1);
+    });
+
+    it('Should be able search contact using name', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                name: "est",
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(1);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(1);
+    });
+
+    it('Should be able search contact using email', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                email: "@",
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(1);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(1);
+    });
+
+    it('Should be able search contact using phone', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                phone: "0000",
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(1);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(1);
+    });
+
+    it('Should be able search contact using name no result', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                name: "salah",
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(0);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(0);
+    });
+
+    it('Should be able search contact using email no result', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                email: "@gmail.com",
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(0);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(0);
+    });
+
+    it('Should be able search contact using phone no result', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                phone: "11111",
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(0);
+        expect(response.body.paging.current_page).toBe(1);
+        expect(response.body.paging.size).toBe(10);
+        expect(response.body.paging.total_page).toBe(0);
+    });
+
+    it('Should be able search contact with paging', async () => {
+        const response = await supertest(web)
+            .get(`/api/contacts`)
+            .query({
+                page: 2,
+                size: 1,
+            })
+            .set("X-API-TOKEN", "test");
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.length).toBe(0);
+        expect(response.body.paging.current_page).toBe(2);
+        expect(response.body.paging.size).toBe(1);
+        expect(response.body.paging.total_page).toBe(1);
+    });
+});

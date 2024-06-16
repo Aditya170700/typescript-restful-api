@@ -1,9 +1,17 @@
-import {ContactResponse, CreateContactRequest, toContactResponse, UpdateContactRequest} from "../model/contact-model";
+import {
+    ContactResponse,
+    CreateContactRequest,
+    SearchContactRequest,
+    toContactResponse,
+    UpdateContactRequest
+} from "../model/contact-model";
 import {Validation} from "../validation/validation";
 import {ContactValidation} from "../validation/contact-validation";
 import {Contact, User} from "@prisma/client";
 import {prismaClient} from "../application/database";
 import {ResponseError} from "../../error/response-error";
+import {Pageable} from "../model/page";
+import {logger} from "../application/logging";
 
 export class ContactService {
     static async create(user: User, req: CreateContactRequest): Promise<ContactResponse> {
@@ -64,5 +72,69 @@ export class ContactService {
         });
 
         return toContactResponse(contact as Contact);
+    }
+
+    static async search(user: User, req: SearchContactRequest): Promise<Pageable<ContactResponse>> {
+        const data = Validation.validate(ContactValidation.SEARCH, req);
+        const skip = (data.page - 1) * data.size;
+        const filters = [];
+
+        if (data.name) {
+            filters.push({
+                OR: [
+                    {
+                        first_name: {
+                            contains: data.name,
+                        }
+                    },
+                    {
+                        last_name: {
+                            contains: data.name,
+                        }
+                    }
+                ]
+            });
+        }
+
+        if (data.email) {
+            filters.push({
+                email: {
+                    contains: data.email,
+                }
+            });
+        }
+
+        if (data.phone) {
+            filters.push({
+                phone: {
+                    contains: data.phone,
+                }
+            });
+        }
+
+        const contacts = await prismaClient.contact.findMany({
+            where: {
+                username: user.username,
+                AND: filters
+            },
+            take: data.size,
+            skip: skip
+        });
+
+        const total = await prismaClient.contact.count({
+            where: {
+                username: user.username,
+                AND: filters
+            }
+        });
+
+        return {
+            data: contacts.map(contact => toContactResponse(contact)),
+            paging: {
+                current_page: data.page,
+                total_page: Math.ceil(total / data.size),
+                size: data.size
+            }
+        };
     }
 }
